@@ -44,6 +44,7 @@ def users_type():
     return {"user_type_detail": user_dict_list}
 
 
+
 # Create user type
 @app.post("/Create_user_type", status_code=status.HTTP_201_CREATED)
 def Create_user_type(user_type: User_Type):
@@ -170,7 +171,8 @@ def Create_Users(Users:Users):
 
 
 
-#create_SignIn
+
+
 @app.post("/User_SignIn", status_code=status.HTTP_201_CREATED)
 def User_SignIn(Users: User_SignIn):
     error_list = []
@@ -234,7 +236,6 @@ def User_SignIn(Users: User_SignIn):
     finally: 
         conn.close()
     
-
 # Endpoint to deactivate a user by setting isActive to 0
 @app.put("/deactivate_user/{user_id}", status_code=status.HTTP_200_OK)
 def deactivate_user(user_id: int):
@@ -263,7 +264,6 @@ def deactivate_user(user_id: int):
     finally:
         conn.close()
 
-
 # Endpoint to deactivate a profile by setting isActive to 0
 @app.put("/deactivate_profile/{profile_id}", status_code=status.HTTP_200_OK)
 def deactivate_profile(profile_id: int):
@@ -291,7 +291,6 @@ def deactivate_profile(profile_id: int):
     
     finally:
         conn.close()
-
 
 # Endpoint to activate a user by setting isActive to 0
 @app.put("/activate_user/{user_id}", status_code=status.HTTP_200_OK)
@@ -355,19 +354,10 @@ def Create_profile_type(Profile_Type:Profile_Type):
    
     conn = sqlite3.connect('event_management.db', timeout=10) 
     cursor = conn.cursor()
-    # if Profile_Type.profile_type_id == 1:
-    #     Profile_Type.profile_type='Admin'
-    # elif Profile_Type.profile_type_id == 2:
-    #     Profile_Type.profile_type='Venue Provider'
-    # elif Profile_Type.profile_type_id == 3:
-    #     Profile_Type.profile_type='Catering Service Provider'
+    
         
     cursor.execute("""INSERT INTO `Profile_Type` (profile_type) VALUES (?) """,
-    (Profile_Type.profile_type,))    
-    #  cursor.execute('''INSERT OR IGNORE INTO Profile_Type (profile_type_id, profile_type) VALUES
-    #      (1, 'Admin'),                        -- Default profile for Admin
-    #      (2, 'Venue Provider'),               -- Default profile for Venue Provider
-    #      (3, 'Catering Service Provider')     -- Default profile for Catering Service Provider ''')
+    (Profile_Type.profile_type,))   
 
     conn.commit()
     res = cursor.execute(""" Select * from `Profile_Type` """)
@@ -378,9 +368,7 @@ def Create_profile_type(Profile_Type:Profile_Type):
     conn.close()
     return {"Profile_Type ":profile_type_dict_list}
 
-
-
-# delete a profile type by ID
+# Endpoint to delete a profile type by ID
 @app.delete("/delete_profile_type/{profile_type_id}", status_code=status.HTTP_200_OK)
 def delete_profile_type(profile_type_id: int):
     conn = sqlite3.connect('event_management.db', timeout=10)
@@ -408,8 +396,6 @@ def delete_profile_type(profile_type_id: int):
 
 
 
-
-#Profile_type
 @app.get("/profile_type")
 def profile_type():  
     error_list = []
@@ -446,7 +432,7 @@ def profile_type():
 
 
 
-#Create_profile
+
 @app.post("/Create_profile", status_code=status.HTTP_201_CREATED)
 def create_profile(profile: Profile):
     conn = sqlite3.connect('event_management.db', timeout=10) 
@@ -495,7 +481,6 @@ def create_profile(profile: Profile):
     
     return {"profile": profile_dict}
 
-
 #update_profile
 @app.post("/update_profile",status_code=status.HTTP_201_CREATED)
 def Update_user_type(update_Profile:update_Profile):
@@ -528,7 +513,6 @@ def Update_user_type(update_Profile:update_Profile):
     return {"update_user_Profile ":update_user_Profile}
 
 
-#check profiles
 @app.get("/profiles")
 async def profiles():
     error_list = []
@@ -565,7 +549,7 @@ async def profiles():
 
 
 
-#get_profile_by_user_1d
+
 @app.get("/get_profile_by_user_1d")
 async def profile_type(user_id: int):
     error_list = []
@@ -605,9 +589,6 @@ async def profile_type(user_id: int):
   
     return {"profile_detail": profile_dict_list}
 
-
-
-
 @app.get("/Users")
 def Users():  
     error_list = []
@@ -640,7 +621,8 @@ def Users():
     return {"users ":users_dict_list}
 
 
-#Create_Package
+
+
 @app.post("/Create_Package", status_code=status.HTTP_201_CREATED)
 def Create_Package(Package: Packages):
     conn = sqlite3.connect('event_management.db', timeout=10) 
@@ -688,21 +670,16 @@ def Packages():
             profile_dict_list = [dict(zip(keys, item)) for item in res]
         except Exception as e:
             error_list.append(f"An error occurred: {str(e)}")
-        #raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
         finally:
             conn.commit()
             conn.close()
             return profile_dict_list
     future = executor.submit(fetch_Packages_data)
     Packages_dict_list = future.result()
-
-    # Check if there were any errors
     if error_list:
         return {"errors": error_list}
   
     return {"Packages ":Packages_dict_list}
-
-
 
 
 #Create Package_Details
@@ -711,8 +688,6 @@ def Create_Package_Details(Package_Details:Package_Details):
    
     conn = sqlite3.connect('event_management.db', timeout=10) 
     cursor = conn.cursor()
-
-    # package_image_json = json.dumps(Package_Details.package_image)
     
     cursor.execute("""INSERT INTO `Package_Details` (`package_header_image`,`package_id`) VALUES (?,?) """,
     (Package_Details.package_header_image,Package_Details.package_id))    
@@ -722,14 +697,10 @@ def Create_Package_Details(Package_Details:Package_Details):
     new_package_dtl_id = cursor.lastrowid
     cursor.execute("SELECT * FROM Package_Details WHERE package_dtl_id = ?", (new_package_dtl_id,))
     result = cursor.fetchone()
-
-    # res = cursor.execute(""" Select * from `Package_Details` """)
-    # res =cursor.fetchall();
     keys = ['package_dtl_id','package_header_image','package_id']
     package_details_data = dict(zip(keys, result))
     conn.close()
     return {"Package_Details ":package_details_data}
-
 
 
 @app.get("/Package_Details", status_code=status.HTTP_200_OK)
@@ -742,11 +713,7 @@ def get_package_details(user_id: int = Query(..., description="ID of the user to
         # Fetch all packages created by the user
         cursor.execute("SELECT * FROM Packages WHERE user_id = ?", (user_id,))
         packages_results = cursor.fetchall()
-
-        # Initialize a dictionary to store package data grouped by package_id
         all_packages = {}
-
-        # Process each package
         for package in packages_results:
             package_id, package_name, package_price, price, user_id_db = package
             if package_id not in all_packages:
@@ -758,8 +725,6 @@ def get_package_details(user_id: int = Query(..., description="ID of the user to
                     "package_details": [],
                     "package_images": []
                 }
-
-            # Fetch data from Package_Details table for the current package_id
             cursor.execute("SELECT * FROM Package_Details WHERE package_id = ?", (package_id,))
             package_details_results = cursor.fetchall()
 
@@ -777,10 +742,11 @@ def get_package_details(user_id: int = Query(..., description="ID of the user to
 
             # Process Package_images results
             for image in package_images_results:
-                package_image_id, _, package_image = image
+                package_image_id, _, package_image, image_desc = image
                 all_packages[package_id]["package_images"].append({
                     "package_image_id": package_image_id,
-                    "package_image": package_image
+                    "package_image": package_image,
+                    "image_desc": image_desc,
                 })
 
         # If no packages were found for the user, return a message
@@ -802,10 +768,7 @@ def get_package_details(user_id: int = Query(..., description="ID of the user to
     }
 
 
-
-
-
-# create a new Package_Details_images entry
+# Endpoint to create a new Package_Details_images entry
 @app.post("/Package_images", status_code=status.HTTP_201_CREATED)
 def Package_images(image_data: Package_images):
     try:
@@ -815,9 +778,9 @@ def Package_images(image_data: Package_images):
 
         # Insert new data into Package_Details_images table
         cursor.execute('''
-            INSERT INTO Package_images (package_id, package_image)
-            VALUES (?, ?)
-        ''', (image_data.package_id, image_data.package_image))
+            INSERT INTO Package_images (package_id, package_image, image_desc)
+            VALUES (?, ?, ?)
+        ''', (image_data.package_id, image_data.package_image, image_data.image_desc))
 
         # Commit the transaction
         conn.commit()
@@ -828,7 +791,7 @@ def Package_images(image_data: Package_images):
         result = cursor.fetchone()
 
         # Define keys to map to the columns in the table
-        keys = ['Package_image_id', 'package_id', 'package_image']
+        keys = ['Package_image_id', 'package_id', 'package_image', 'image_desc']
         package_image = dict(zip(keys, result))
 
     except Exception as e:
@@ -856,7 +819,7 @@ def get_Package_images():
         results = cursor.fetchall()
 
         # Define keys to map to the columns in the table
-        keys = ['Package_image_id', 'package_id', 'package_image']
+        keys = ['Package_image_id', 'package_id', 'package_image', 'image_desc']
         package_images_list = [dict(zip(keys, result)) for result in results]
 
     except Exception as e:
@@ -872,8 +835,6 @@ def get_Package_images():
 
 
 
-
-# #Create Book Event
 @app.post("/Create_Book_Event", status_code=status.HTTP_201_CREATED)
 def Create_Book_Event(event: Events):
     conn = sqlite3.connect('event_management.db', timeout=10)
@@ -888,14 +849,12 @@ def Create_Book_Event(event: Events):
         (event.event_name, event.number_of_guests, event.package_id, event.start_date.strftime("%Y-%m-%d"),event.end_date.strftime("%Y-%m-%d"), event.user_id,event.profile_id,event.location)
     )
 
-    # Get the last inserted event ID
     event_id = cursor.lastrowid
 
     # Fetch only the newly created event
     cursor.execute("SELECT * FROM Events WHERE event_id = ?", (event_id,))
     row = cursor.fetchone()
 
-    # Map the fetched row to a dictionary format
     keys = ['event_id', 'event_name', 'number_of_guests', 'package_id', 'start_date', 'end_date', 'user_id','profile_id','location','payment_status']
     created_event = dict(zip(keys, row))
 
@@ -990,7 +949,6 @@ async def Booked_Events(user_id: int):
                 "events": []
             }
 
-            # Retrieve events associated with the profile_id
             events_query = '''
             SELECT event_id, event_name, number_of_guests, start_date, end_date, location, payment_status, user_id
             FROM Events
@@ -1010,8 +968,6 @@ async def Booked_Events(user_id: int):
                     "location": event[5],             # index 5 corresponds to location
                     "payment_status": event[6]        # index 6 corresponds to payment_status
                 }
-
-                # Fetch user details for the user_id from the event
                 user_id_from_event = event[7]  # index 7 corresponds to user_id from the event
                 user_query_for_event = '''
                 SELECT first_name, last_name, business_name, email, location, contact
@@ -1042,6 +998,7 @@ async def Booked_Events(user_id: int):
 
 
 
+
 @app.get("/checklist_of_events", status_code=status.HTTP_200_OK)
 def checklist_of_events(user_id: int = Query(..., description="ID of the user to fetch events for")):
     error_list = []
@@ -1052,9 +1009,7 @@ def checklist_of_events(user_id: int = Query(..., description="ID of the user to
         try:
             conn = sqlite3.connect('event_management.db', timeout=10)
             cursor = conn.cursor()
-            
-            # Fetch events for the specified user_id where payment_status is 'Pending'
-            # and include profile_id, company_name, and profile_type in the results
+
             cursor.execute("""
                 SELECT e.event_id, e.event_name, e.number_of_guests, e.package_id, e.start_date, e.end_date,
                        e.user_id, e.payment_status, e.profile_id, p.company_name, pt.profile_type
@@ -1093,8 +1048,6 @@ def checklist_of_events(user_id: int = Query(..., description="ID of the user to
     return {"events": events_list}
 
 
-
-#Create_Payments
 @app.post("/Create_Payments", status_code=status.HTTP_201_CREATED)
 def create_payment(payment: Payments):
     conn = sqlite3.connect('event_management.db', timeout=10)
@@ -1106,18 +1059,16 @@ def create_payment(payment: Payments):
         VALUES (?, ?, ?, ?, ?)
     """, (payment.payment_amount, payment.payment_type, payment.event_id, payment.package_id, payment.user_id))
 
+    # Commit the transaction
     conn.commit()
 
     # Retrieve the last inserted payment record
     new_payment_id = cursor.lastrowid
     cursor.execute("SELECT * FROM Payments WHERE payment_id = ?", (new_payment_id,))
     result = cursor.fetchone()
-
-    # Map the result to a dictionary
     keys = ['payment_id', 'payment_amount', 'payment_type', 'payment_status', 'event_id', 'package_id', 'user_id']
     payment_data = dict(zip(keys, result))
 
-    # Update the `payment_status` of the corresponding event to "Payment Transferred"
     cursor.execute("""
         UPDATE Events
         SET payment_status = 'Payment Transferred'
@@ -1128,6 +1079,7 @@ def create_payment(payment: Payments):
     conn.close()
 
     return {"Payment": payment_data}
+
 
 
 
@@ -1169,11 +1121,7 @@ def create_event(event: EventCreateRequest, user_id: int):
 
     conn = sqlite3.connect('event_management.db')
     cursor = conn.cursor()
-    # Check if the user is an event organizer by checking profile_type_id = 5 since ,i save event organizer in profile table as 5 
-    # Allow only if the profile_type_id is 5 (Event Organizer)
-    # if user_id != 5:
-    #     raise HTTPException(status_code=403, detail="Permission denied: User is not an event organizer")
-        # Verify the user's profile type to ensure they're an event organizer
+
     cursor.execute('SELECT profile_type_id FROM Users WHERE user_id = ?', (user_id,))
     result = cursor.fetchone()
     
@@ -1200,8 +1148,6 @@ def create_event(event: EventCreateRequest, user_id: int):
 
     # Return a success message with the generated event ID
     return {"message": "Event created successfully", "event_id": new_event_id}
-
-
 
 # Get Event List
 @app.get("/get_event_by_Event_Organisers")
@@ -1235,8 +1181,6 @@ def Get_event_by_Event_Organisers():
   
     return {"Events ":events_dict_list}
 
-
-
 # Endpoint to submit a new bid
 @app.post("/submit_bid/")
 async def submit_bid(bid: BidRequest):
@@ -1268,8 +1212,6 @@ async def submit_bid(bid: BidRequest):
     conn.close()
 
     return {"message": "Bid submitted successfully!"}
-
-
 
 # view bidding
 @app.get("/view_bidding")
@@ -1303,10 +1245,7 @@ def View_bidding():
   
     return {"Biddings_data ":bidding_dict_list}
 
-
-
-
-# select the winning bid
+# Endpoint to select the winning bid
 @app.post("/select_bid/")
 async def select_bid(select_bid: SelectBidRequest):
 
@@ -1338,8 +1277,6 @@ async def select_bid(select_bid: SelectBidRequest):
     ''', (select_bid.bid_id,))
     
     conn.commit()
-
-    # Return the selected bid details
     selected_bid = {
         "bid_id": bid[0],  # Assuming bid_id is the first column in Mark_bidding
         "event_id": bid[1],  # Assuming event_id is the second column in Mark_bidding
@@ -1350,6 +1287,7 @@ async def select_bid(select_bid: SelectBidRequest):
     conn.close()
 
     return {"selected_bid": selected_bid}
+
 
 
 
@@ -1410,8 +1348,6 @@ def get_user_by_id(user_id: int):
     conn.close()
     return user_info
 
-
-
 # Endpoint to get user profile with all related information
 @app.get("/user_profiles_information", status_code=status.HTTP_200_OK)
 def get_user_profile(user_id: int):
@@ -1419,7 +1355,6 @@ def get_user_profile(user_id: int):
     if not user_info:
         return {"message": "User not found"}
     return {"user": user_info}
-
 
 
 
@@ -1438,8 +1373,6 @@ def get_user_packages(user_id: int):
 
     conn.close()
     return {"packages_info": packages_info}
-
-
 
 @app.get("/all_profiles_info/")
 def get_profiles(profile_number: int = Query(..., description="Profile number (1 for event organizer, 2 for venue provider, 3 for other profiles)")):
@@ -1495,3 +1428,11 @@ def get_profiles(profile_number: int = Query(..., description="Profile number (1
     conn.close()
 
     return {"profiles": profiles}
+
+
+
+if __name__ == "__main__":
+    #Testing
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=10029)
+    conn.close()
